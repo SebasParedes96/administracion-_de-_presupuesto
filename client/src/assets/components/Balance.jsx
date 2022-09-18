@@ -113,7 +113,6 @@ function Balance(props) {
                     console.log(error);
                 });
             console.log('enviado')
-            setLoading()
         } else {
             console.log('faltan datos')
         }
@@ -121,7 +120,7 @@ function Balance(props) {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <Card style={{ width: '18rem' }}>
+        <Card style={{ width: '18rem', height: '92vh' }}>
             <Card.Body >
                 <Card.Title style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}} >Balance</Card.Title>
 
@@ -177,8 +176,11 @@ function Balance(props) {
                 </Form>
             </Card.Body>
         </Card>
-        <div style={{ paddingTop: 50, paddingLeft: 10, paddingRight: 10 }}>
-            <Operations key={loading} />
+        <div style={{ paddingTop: 50, 
+            paddingLeft: 10, 
+            paddingRight: 10,
+            width: '100vh' }}>
+            <Operations key={loading} parentCallback = { function reload(){setLoading(!loading)}} />
         </div>
         </div>
     );

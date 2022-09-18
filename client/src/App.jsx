@@ -9,8 +9,15 @@ import PublicRoutes from './assets/components/router/publicRoutes'
 function App() {
 
   return (
-    <div>
-      <AuthContextProvider>
+    <div style={{
+      backgroundImage: 
+      "url('https://freefrontend.com/assets/img/css-triangle-backgrounds/2-triangles-background.png')",
+      display: 'flex',
+      height:'100vh',
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      flexDirection: 'column'}}>
+      <AuthContextProvider >
       <NavBar />
         <BrowserRouter>
           <Routes>

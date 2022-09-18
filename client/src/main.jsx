@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode style={{
-    height: "100vh"}} >
+  <React.StrictMode>
     <App />
   </React.StrictMode>
 )

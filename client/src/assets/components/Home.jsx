@@ -10,7 +10,7 @@ function Home() {
                 alignItems: 'center',
                 alignSelf: 'stretch',
                 justifyContent: 'space-around',
-                backgroundImage: "url('https://i.pinimg.com/originals/b2/14/da/b214da31e10622448167a5eebf5923a5.jpg')"
+                height:'80vh'
             }}>
                 <Login />
                 <Register />

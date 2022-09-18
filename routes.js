@@ -3,11 +3,11 @@ const conexion = require('./config/conexion')
 
 // routes
 
-//get 10 operations
+//get 10 operations for type
 
-router.get('/:id_usser/operations', (req, res) => {
-    const { id_usser } = req.params
-    let sql = `select 
+router.get('/:id_usser/operations/:type', (req, res) => {
+    const { id_usser, type } = req.params
+    let sql = `select
     operations.id as id,
     concept as concept,
     date_format(date, "%Y-%m-%d") as date,
@@ -18,32 +18,10 @@ router.get('/:id_usser/operations', (req, res) => {
     from operations 
     inner join type_operations on type_operations.id = operations.id_type_operation
     inner join categories on categories.id = operations.id_category 
-    where id_usser =  ? AND leavingDate is null ORDER BY date desc limit 10`
-    conexion.query(sql, [id_usser], (err, rows, fields) => {
-        if (err) throw err;
-        else {
-            res.json(rows)
-        }
-    })
-})
-
-//get 10 operations for type
-
-router.get('/:id_usser/operations/:type', (req, res) => {
-    const { id_usser, type } = req.params
-    let sql = `select
-    operations.id as id,
-    concept as concept,
-    date as date,
-    amount as amount,
-    type_operations.description as type,
-    id_category as id_category,
-    categories.description as category
-    from operations 
-    inner join type_operations on type_operations.id = operations.id_type_operation
-    inner join categories on categories.id = operations.id_category 
-    where id_usser =  ? AND id_type_operation = ? AND leavingDate is null ORDER BY date desc limit 10`
-    conexion.query(sql, [id_usser, type], (err, rows, fields) => {
+    where id_usser =  ? 
+    AND id_type_operation = ( case when ? = 0 then id_type_operation else ? end) 
+    AND leavingDate is null ORDER BY date desc limit 10`
+    conexion.query(sql, [id_usser, type,type], (err, rows, fields) => {
         if (err) throw err;
         else {
             res.json(rows)
@@ -80,7 +58,9 @@ router.get('/types', (req, res) => {
 
 router.get('/:id_usser', (req, res) => {
     const { id_usser } = req.params
-    let sql = 'select sum(case when id_type_operation = 1 then amount else - amount end) as balance from operations where id_usser = ?'
+    let sql = `select 
+    sum(case when id_type_operation = 1 then amount else - amount end) as balance 
+    from operations where id_usser = ? AND leavingDate is null`
     conexion.query(sql, [id_usser], (err, rows, fields) => {
         if (err) throw err;
         else {

@@ -7,7 +7,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import { useAuthContext } from "../../context/authContext";
 
-function Operations() {
+function Operations(props) {
+
+    function loadingBalance () {
+        console.log('entro')
+        props.parentCallback()
+    }
 
     const {idUser} = useAuthContext()
     const [Operations, setOperations] = useState([])
@@ -15,6 +20,10 @@ function Operations() {
     const [validated, setValidated] = useState(false);
     const [modalEdit, setModalEdit] = useState(false)
     const [errors, setErrors] = useState({});
+    const [type, setType] = useState({
+        type:0
+    })
+    const [types, setTypes] = useState([]);
     const [formDataEdit, setFormDataEdit] = useState({
         concept: "",
         amount: "",
@@ -33,11 +42,14 @@ function Operations() {
     }
 
     const onChange = (e) => setFormDataEdit({ ...formDataEdit, [e.target.name]: e.target.value })
+    const onChangeType = (e) => {
+        setType({ ...type, [e.target.name]: e.target.value })
+        setLoading(!loading);}
 
     const handleClose = () => setModalEdit(false);
     useEffect(() => {
         // get operations
-        axios.get(`http://localhost:3000/api/${idUser}/operations`)
+        axios.get(`http://localhost:3000/api/${idUser}/operations/${type.type}`)
             .then((response) => {
                 console.log(response);
                 setOperations(response.data);
@@ -55,6 +67,15 @@ function Operations() {
             .catch((error) => {
                 console.log(error);
             })
+        // get types
+        axios.get('http://localhost:3000/api/types')
+        .then((response) => {
+            console.log(response);
+            setTypes(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
     }, [loading]);
 
     //delete operations
@@ -63,7 +84,9 @@ function Operations() {
         axios.delete(`http://localhost:3000/api/${id}`)
             .then(function (response) {
                 console.log(response);
+                loadingBalance()
                 setLoading(!loading);
+
             })
             .catch(function (error) {
                 console.log(error);
@@ -116,6 +139,7 @@ function Operations() {
                 .then(function (response) {
                     console.log(response);
                     handleClose();
+                    loadingBalance()
                     setLoading(!loading);
                 })
                 .catch(function (error) {
@@ -131,7 +155,15 @@ function Operations() {
 
     return (
         <React.Fragment>
-                <Table striped bordered hover>
+                <Form.Select aria-label="Default select" onChange={(e) => onChangeType(e)} name='type'>
+                    <option value='null' >Todas</option>
+                    {
+                        types.map(elemento => (
+                            <option key={elemento.id} value={elemento.id}>{elemento.description}</option>
+                        ))
+                    }
+                </Form.Select>
+                <Table striped bordered hover variant="dark">
                     <thead>
                         <tr>
                             <th>Fecha</th>
@@ -147,7 +179,7 @@ function Operations() {
                                     <td>{elemento.date}</td>
                                     <td>{elemento.amount}</td>
                                     <td>{elemento.type}</td>
-                                    <td>
+                                    <td style={{display: 'flex' , justifyContent: 'space-around' }} >
                                         <Button onClick={() => selectOperation(elemento, 'edit')} >Editar</Button>
                                         <Button onClick={() => deleteOperation(elemento.id)} >Borrar</Button>
                                     </td>
