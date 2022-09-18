@@ -9,21 +9,28 @@ const app = express();
 
 app.use(express.json())
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();  
+  });
+
 // configurar puerto
 
 app.set('port',port)
 
 // rutas
 
-app.use('/api',require('./rutas'))
+app.use('/api',require('./routes'))
 
 
 
-// iniciar express
+// init express
 app.listen(app.get('port'),(error)=>{
     if (error) {
-        console.log('error al iniciar servidor: '+ error)
+        console.log('Error starting server: '+ error)
     } else {
-       console.log('Servidor inicado en el puerto '+port) 
+       console.log('Server started on port '+port) 
     }
 })
